@@ -20,9 +20,14 @@ const themeColor1= "#fff";
 function CustomDrawer({navigation,currentUser,setUser}) {
 
   const signOut = async() => {
+    GoogleSignin.configure({
+      androidClientId: '349564323951-n4rketc4oe2dto7a7ummonqbdnphopt3.apps.googleusercontent.com',
+      webClientId:'349564323951-fgfh3g05vvjbl67o31jscuje2thni902.apps.googleusercontent.com'
+      });
     try {
-        await GoogleSignin.signOut();
-        setUser(null);
+          await GoogleSignin.isSignedIn();
+          await GoogleSignin.signOut();
+          setUser(null);
        // Remember to remove the user from your app's state as well
       } catch (error) {
         console.error(error);
@@ -69,8 +74,8 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           <Text style={styles.menuText}>Complete KYC</Text>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-      <View style={styles.drawerMenu}>
+      <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>
+      <View style={styles.drawerMenu} >
           <Ic name="wallet" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>Wallet</Text>
       </View>

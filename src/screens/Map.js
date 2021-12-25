@@ -18,6 +18,7 @@ import Icons from 'react-native-vector-icons/Entypo';
 import Ic from 'react-native-vector-icons/Ionicons';
 import Ico from 'react-native-vector-icons/MaterialIcons';
 import {ScrollView} from 'react-native-gesture-handler';
+import { Marker } from 'react-native-maps';
 
 const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
@@ -130,7 +131,13 @@ const Home = ({navigation}) => {
           }}
           zoomEnabled
           region={position}
+        >
+          <Marker
+          coordinate={position}
+          title="u"
+          // description={marker.description}
         />
+        </MapView>
       </View>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -170,7 +177,7 @@ const Home = ({navigation}) => {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} >
           <View style={styles.menu}>
             <Ic name="home" size={25} color={themeColor1} />
           </View>
@@ -180,9 +187,9 @@ const Home = ({navigation}) => {
             <Ic name="qr-code" size={30} color={themeColor1} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => requestPermission()}>
           <View style={styles.menu}>
-            <Ic name="location-outline" size={25} color={themeColor1} />
+            <Ico name="gps-fixed" size={25} color={themeColor1} />
           </View>
         </TouchableOpacity>
       </View>
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     marginLeft:15,
     marginRight:15,
     backgroundColor: themeColor2,
-    borderRadius: 5,
+    borderRadius: 50,
   },
   menu: {
     padding: 8,
@@ -377,6 +384,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     bottom: 0,
+    borderTopLeftRadius:30,
+    borderTopRightRadius:30
   },
 });
 

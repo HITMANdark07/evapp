@@ -139,7 +139,7 @@ const Home = ({navigation,currentUser}) => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>
                   <View style={styles.quicklelem}>
                     <Ico
                       name="account-balance-wallet"
@@ -151,7 +151,7 @@ const Home = ({navigation,currentUser}) => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity >
                   <View style={styles.quicklelem}>
                     <Ico
                       name="history"
@@ -340,6 +340,8 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     top: 0,
+    borderBottomLeftRadius:30,
+    borderBottomRightRadius:30
   },
   quickContainer: {
     display: 'flex',
@@ -368,7 +370,7 @@ const styles = StyleSheet.create({
     marginLeft:15,
     marginRight:15,
     backgroundColor: themeColor2,
-    borderRadius: 5,
+    borderRadius: 50,
   },
   menu: {
     padding: 8,
@@ -388,6 +390,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     bottom: 0,
+    borderTopLeftRadius:30,
+    borderTopRightRadius:30
   },
 });
 const mapStateToProps = (state) => ({

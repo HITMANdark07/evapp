@@ -12,6 +12,7 @@ import {LogBox } from 'react-native';
 import DataShow from './src/screens/DataShow';
 import Login from './src/screens/Login';
 import Map from './src/screens/Map';
+import Wallet from './src/screens/Wallet';
 LogBox.ignoreLogs(['Reanimated 2']);
 import { connect } from 'react-redux';
 
@@ -25,6 +26,7 @@ function HomeScreen() {
       <Drawer.Screen name="Profile" component={Profile} options={{headerShown:false}} />
       <Drawer.Screen name="Maps" component={Map} options={{headerShown:false}} />
       <Drawer.Screen name="DataShow" component={DataShow} options={{headerShown:false}} />
+      <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false}} />
     </Drawer.Navigator>
   );
 }

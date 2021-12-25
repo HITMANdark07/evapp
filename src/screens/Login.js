@@ -12,8 +12,6 @@ const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
 const appbar = '#7Cb342';
 
-
-
 const Login = ({navigation,setUser}) => {
     
     const signIn = () => {
