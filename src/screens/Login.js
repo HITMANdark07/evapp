@@ -15,20 +15,7 @@ const appbar = '#7Cb342';
 
 
 const Login = ({navigation,setUser}) => {
-    const [user,setCUser] = React.useState({
-        email: "",
-        photo: "", 
-        name: "" 
-    });
-    const signOut = async() => {
-        try {
-            await GoogleSignin.signOut();
-            console.log("Signed out");
-           // Remember to remove the user from your app's state as well
-          } catch (error) {
-            console.error(error);
-          }
-    }
+    
     const signIn = () => {
         GoogleSignin.configure({
             androidClientId: '349564323951-n4rketc4oe2dto7a7ummonqbdnphopt3.apps.googleusercontent.com',
@@ -39,12 +26,7 @@ const Login = ({navigation,setUser}) => {
                     GoogleSignin.signIn().then((userInfo) => {
                             const {email , name, photo} = userInfo.user;
                             setUser(userInfo.user);
-                            setCUser({
-                                email:email,
-                                name:name,
-                                photo:photo
-                            })
-                            navigation.navigate('HomeScreen');
+                            // navigation.navigate('HomeScreen');
                             console.log(name,email);
                     }).catch((e) => {
                     console.log("ERROR IS : " + JSON.stringify(e));
@@ -86,9 +68,9 @@ const Login = ({navigation,setUser}) => {
                 color={GoogleSigninButton.Color.Dark}
                 onPress={signOut}
                 /> */}
-            <TouchableOpacity style={styles.footView} onPress={signOut}>
+            <View style={styles.footView} >
             <Text style={styles.footText}>Made in India with <Icon name="favorite" size={25} color={'red'} /></Text>
-            </TouchableOpacity>
+            </View>
         </View>
     )
 };

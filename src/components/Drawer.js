@@ -11,9 +11,23 @@ import Ico from "react-native-vector-icons/MaterialIcons";
 import { TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
+import { setCurrentUser } from '../redux/user/user.action';
+import {
+  GoogleSignin,
+} from '@react-native-google-signin/google-signin';
 
 const themeColor1= "#fff";
-function CustomDrawer({navigation,currentUser}) {
+function CustomDrawer({navigation,currentUser,setUser}) {
+
+  const signOut = async() => {
+    try {
+        await GoogleSignin.signOut();
+        setUser(null);
+       // Remember to remove the user from your app's state as well
+      } catch (error) {
+        console.error(error);
+      }
+}
   return (
     <DrawerContentScrollView style={{backgroundColor:'#7Cb342', borderTopRightRadius:35, borderBottomRightRadius:35}}>
       {/* <View style={styles.logo}> */}
@@ -61,8 +75,8 @@ function CustomDrawer({navigation,currentUser}) {
           <Text style={styles.menuText}>Wallet</Text>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-      <View style={styles.drawerMenu}>
+      <TouchableOpacity onPress={signOut}>
+      <View style={styles.drawerMenu} >
           <Ico name="logout" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>Logout</Text>
       </View>
@@ -114,5 +128,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   currentUser: state.user.currentUser
 })
+const mapDispatchToProps = (dispatch) => ({
+  setUser : user => dispatch(setCurrentUser(user))
+})
 
-export default connect(mapStateToProps)(CustomDrawer);
+export default connect(mapStateToProps,mapDispatchToProps)(CustomDrawer);

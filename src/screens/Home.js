@@ -193,10 +193,6 @@ const Home = ({navigation,currentUser}) => {
           </View>
         </View>
 
-
-        <View>
-          <Text style={{fontSize:13, textAlign:'center'}}>{JSON.stringify(currentUser)}</Text>
-        </View>
       </ScrollView>
       
       <View style={styles.header}>
