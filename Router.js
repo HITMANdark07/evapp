@@ -35,7 +35,7 @@ const Router = ({currentUser}) => {
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Splash'>
                 {
-                    currentUser && currentUser.givenName ?
+                    currentUser && currentUser.email ?
                     <>
                     <Stack.Screen name="Splash" component={Splash} options={{ headerShown:false }}/>
                     <Stack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown:false}} />

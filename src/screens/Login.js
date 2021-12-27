@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ToastAndroid } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from "axios";
 import {
     GoogleSignin,
   } from '@react-native-google-signin/google-signin';
 import { connect } from 'react-redux';
 import {setCurrentUser} from '../redux/user/user.action';
+import { api } from '../../api.config';
 
 const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
@@ -23,7 +25,34 @@ const Login = ({navigation,setUser}) => {
                 if (hasPlayService) {
                     GoogleSignin.signIn().then((userInfo) => {
                             const {email , name, photo} = userInfo.user;
-                            setUser(userInfo.user);
+                            axios.post(`${api}/login`,{
+                                email,
+                                name,
+                                photo
+                            }).then((response) => {
+                                console.log(response.data.user);
+                                // console.log(userInfo.user)
+                                if(response.data.user){
+                                    setUser(response.data.user);
+                                }
+                                // setUser(response.data.user);
+                            }).catch((err) => {
+                                console.log(err.response.data.error);
+                                ToastAndroid.showWithGravityAndOffset(
+                                    err.response.data.error,
+                                    ToastAndroid.LONG,
+                                    ToastAndroid.CENTER,
+                                    25,
+                                    50
+                                  );
+                                  try {
+                                    GoogleSignin.signOut();
+                                    setUser(null);
+                                    } catch (error) {
+                                    console.error(error);
+                                    }
+                            })
+                            
                             // navigation.navigate('HomeScreen');
                             console.log(name,email);
                     }).catch((e) => {

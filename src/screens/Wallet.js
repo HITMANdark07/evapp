@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet,TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
 
 
 const themeColor1 = '#fff';
@@ -9,7 +10,7 @@ const themeColor2 = '#33691E';
 const appbar = '#7Cb342';
 
 const vals = ['100','500','1000','2500'];
-function Wallet({navigation}) {
+function Wallet({navigation,currentUser}) {
     const [amount, setAmount] = React.useState("");
     return (
         <View style={styles.main}>
@@ -24,7 +25,7 @@ function Wallet({navigation}) {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Icon name="wallet" size={60} style={styles.wallet} color={appbar} />
                 <View style={styles.moneyContainer}>
-                    <Text style={styles.money}>₹ 0</Text>
+                    <Text style={styles.money}>₹ {currentUser.balance}</Text>
                     <Text>Current Balance</Text>
                 </View>
                 <View style={styles.amountContainer}>
@@ -121,5 +122,9 @@ const styles = StyleSheet.create({
     }
 })
 
+const mapStateToProps = (state) => ({
+    currentUser : state.user.currentUser
+})
 
-export default Wallet;
+
+export default connect(mapStateToProps)(Wallet);

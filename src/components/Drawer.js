@@ -53,7 +53,7 @@ function CustomDrawer({navigation,currentUser,setUser}) {
       <View style={styles.drawerMenu}>
           {currentUser && currentUser.photo ? (<Image source={{uri:currentUser.photo}} style={styles.photo} />) :
           (<Icon name="user-circle-o" style={styles.icon} color={themeColor1} size={30} />)}
-          <Text style={styles.menuText}>Hi, {currentUser && currentUser.givenName ? currentUser.givenName : "USER"}</Text>
+          <Text style={styles.menuText}>Hi, {currentUser && currentUser.name ? currentUser.name.split(" ")[0] : "USER"}</Text>
       </View>
       </TouchableOpacity>
       <TouchableOpacity>
