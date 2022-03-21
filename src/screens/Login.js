@@ -25,10 +25,12 @@ const Login = ({navigation,setUser}) => {
                 if (hasPlayService) {
                     GoogleSignin.signIn().then((userInfo) => {
                             const {email , name, photo} = userInfo.user;
+                            const { idToken } = userInfo;
                             axios.post(`${api}/login`,{
                                 email,
                                 name,
-                                photo
+                                photo,
+                                idToken
                             }).then((response) => {
                                 console.log(response.data.user);
                                 // console.log(userInfo.user)

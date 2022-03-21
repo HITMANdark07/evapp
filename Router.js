@@ -24,6 +24,8 @@ function HomeScreen() {
     <Drawer.Navigator screenOptions={{drawerStyle:{backgroundColor:'transparent'}}} drawerContent={(props) => <CustomDrawer {...props}  /> }>
       <Drawer.Screen name="Home" component={Home} options={{headerShown:false}} />
       <Drawer.Screen name="Profile" component={Profile} options={{headerShown:false}} />
+      <Drawer.Screen name="Maps" component={Map} options={{headerShown:false}} />
+      <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false}} />
     </Drawer.Navigator>
   );
 }
