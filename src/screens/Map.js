@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,11 +7,14 @@ import {
   Text,
   Image,
 } from 'react-native';
+import usr from '../../assets/user.png'
 import Geolocation from 'react-native-geolocation-service';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import LottieView from 'lottie-react-native';
 import Torch from 'react-native-torch';
+import axios from 'axios';
 import {RNCamera} from 'react-native-camera';
+import { api } from '../../api.config';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/Entypo';
@@ -30,6 +33,54 @@ const Home = ({navigation}) => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  const [devices, setDevices] = useState([]);
+  function calcCrow(lat1, lon1, lat2, lon2) {
+    var R = 6371; // earth radius in km
+    var dLat = toRad(lat2-lat1);
+    var dLon = toRad(lon2-lon1);
+    var lat1 = toRad(lat1);
+    var lat2 = toRad(lat2);
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c;
+    return d;
+  }
+
+  function toRad(Value) {
+      return Value * Math.PI / 180;
+  }
+
+  const init = async(pos) => {
+    try{
+      const {data} = await axios({
+        method:'GET',
+        url:`${api}/device/list`
+      });
+      const dvs = [];
+      data?.forEach((device) => {
+        dvs.push({
+          ...device,
+          location:{
+            latitude:device.location.lat,
+            longitude:device.location.lng,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          distance:+(calcCrow(pos.latitude, pos.longitude,device.location.lat,device.location.lng ).toFixed(2))
+        })
+      })
+      dvs.sort((a,b) => {
+        return a.distance - b.distance;
+      })
+      setDevices(dvs);
+      // console.log(dvs);
+    }catch(err){
+      console.log(err);
+    }
+  }
   const [torchState, setTorchState] = React.useState(0);
   const refRBSheet = useRef();
   const camRef = useRef();
@@ -50,6 +101,7 @@ const Home = ({navigation}) => {
             longitudeDelta: 0.0621,
           };
           setPosition(initialRegion);
+          init(initialRegion);
         },
         error => alert(JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
@@ -77,50 +129,7 @@ const Home = ({navigation}) => {
     };
   }, []);
 
-  const dummy = [
-    {
-      deviceId:"f313db",
-      distance:"3.0 KM",
-      status:'Available',
-      timing: '24/7',
-      rate: '17'
-    },
-    {
-      deviceId:"f123db",
-      distance:"6.0 KM",
-      status:'Not Available',
-      timing: '24/7',
-      rate: '8'
-    },
-    {
-      deviceId:"f313fb",
-      distance:"12.0 KM",
-      status:'Available',
-      timing: '24/7',
-      rate: '10'
-    },
-    {
-      deviceId:"f456db",
-      distance:"11.0 KM",
-      status:'Available',
-      timing: '24/7',
-      rate: '11'
-    },
-    {
-      deviceId:"f323jb",
-      distance:"12.2 KM",
-      status:'Available',
-      timing: '24/7',
-      rate: '12'
-    },
-    {
-      deviceId:"f313de",
-      distance:"13.0 KM",
-      status:'Not Available',
-      timing: '24/7',
-      rate: '18'
-    },
-  ]
+  
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 4}}>
@@ -133,10 +142,20 @@ const Home = ({navigation}) => {
           region={position}
         >
           <Marker
+          image={usr}
+          style={{width:50, height:50}}
           coordinate={position}
-          title="u"
-          // description={marker.description}
+          title="YOU"
         />
+        {
+          devices.map((device) => {
+            return(<Marker
+              key={device.code}
+              coordinate={device.location}
+              title={device.code}
+            />)
+          })
+        }
         </MapView>
       </View>
       <View style={styles.header}>
@@ -157,16 +176,16 @@ const Home = ({navigation}) => {
         showsHorizontalScrollIndicator={false}
         style={{position: 'absolute', bottom: 110}}>
         <View style={{flexDirection: 'row'}}>
-          {dummy.map((dum) => (
-            <TouchableOpacity style={styles.hView} key={dum.deviceId} activeOpacity={0.5}>
+          {devices.map((device) => (
+            <TouchableOpacity style={styles.hView} key={device.code} activeOpacity={0.5}>
             <View style={styles.cardContainer}>
               <Image style={{width: 60, height: 80, backgroundColor: '#fff'}} source={{uri:"https://www.eee.upd.edu.ph/sites/default/files/media/news/rapid-electric-vehicle-charging-%E2%80%93-charging-minutes-charm/5-charm-rapid-charging-station.jpg"}}/>
               <View style={styles.cardContents}>
-                <Text style={styles.deviceId}>{dum.deviceId}</Text>
-                <Text style={[styles.cardStatus,{backgroundColor:dum.status==='Not Available' ? 'red':appbar}]}>{dum.status}</Text>
-                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Distance:</Text> {dum.distance}</Text>
-                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Timings:</Text> open {dum.timing}</Text>
-                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Rate:</Text> ₹ {dum.rate}/Unit</Text>
+                <Text style={styles.deviceId}>{device.code}</Text>
+                <Text style={[styles.cardStatus,{backgroundColor:device?.inuse ? 'red':appbar}]}>{device.inuse ? 'NOT AVAILABLE': 'AVAILABLE'}</Text>
+                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Distance:</Text> {device?.distance}</Text>
+                {/* <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Timings:</Text> open {device.timing}</Text> */}
+                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Rate:</Text> ₹ {device.rate}/Unit</Text>
               </View>
               <View style={{padding:5}}>
                 <Icons name="direction" size={45} color={themeColor1} />
