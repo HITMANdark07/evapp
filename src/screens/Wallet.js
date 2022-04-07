@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet,TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+const Paytm = require('paytmchecksum');
+import AllInOneSDKManager from 'paytm_allinone_react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
