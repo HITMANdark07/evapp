@@ -13,8 +13,10 @@ import DataShow from './src/screens/DataShow';
 import Login from './src/screens/Login';
 import Map from './src/screens/Map';
 import Wallet from './src/screens/Wallet';
+import History from './src/screens/History';
 LogBox.ignoreLogs(['Reanimated 2']);
 import { connect } from 'react-redux';
+import Support from './src/screens/Support';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -26,6 +28,8 @@ function HomeScreen() {
       <Drawer.Screen name="Profile" component={Profile} options={{headerShown:false}} />
       <Drawer.Screen name="Maps" component={Map} options={{headerShown:false}} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false}} />
+      <Drawer.Screen name="History" component={History} options={{headerShown:false}} />
+      <Drawer.Screen name="Support" component={Support} options={{headerShown:false}} />
     </Drawer.Navigator>
   );
 }

@@ -151,7 +151,7 @@ const Home = ({navigation,currentUser}) => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => navigation.navigate('History')}>
                   <View style={styles.quicklelem}>
                     <Ico
                       name="history"
@@ -163,7 +163,7 @@ const Home = ({navigation,currentUser}) => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Support')}>
                   <View style={styles.quicklelem}>
                     <Ico
                       name="support-agent"

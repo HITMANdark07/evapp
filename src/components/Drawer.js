@@ -74,6 +74,12 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           <Text style={styles.menuText}>Complete KYC</Text>
       </View>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('History')}>
+      <View style={styles.drawerMenu}>
+          <Ico name="history" style={styles.icon} color={themeColor1} size={30} />
+          <Text style={styles.menuText}>History</Text>
+      </View>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>
       <View style={styles.drawerMenu} >
           <Ic name="wallet" style={styles.icon} color={themeColor1} size={30} />

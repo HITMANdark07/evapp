@@ -183,7 +183,7 @@ const Home = ({navigation}) => {
               <View style={styles.cardContents}>
                 <Text style={styles.deviceId}>{device.code}</Text>
                 <Text style={[styles.cardStatus,{backgroundColor:device?.inuse ? 'red':appbar}]}>{device.inuse ? 'NOT AVAILABLE': 'AVAILABLE'}</Text>
-                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Distance:</Text> {device?.distance}</Text>
+                <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Distance:</Text> {device?.distance} Km</Text>
                 {/* <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Timings:</Text> open {device.timing}</Text> */}
                 <Text style={{color: themeColor1}}><Text style={{fontWeight:'700'}}>Rate:</Text> ₹ {device.rate}/Unit</Text>
               </View>
