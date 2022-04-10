@@ -17,6 +17,7 @@ import History from './src/screens/History';
 LogBox.ignoreLogs(['Reanimated 2']);
 import { connect } from 'react-redux';
 import Support from './src/screens/Support';
+import VerifyOTP from './src/screens/VerifyOTP';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -29,6 +30,7 @@ function HomeScreen() {
       <Drawer.Screen name="Maps" component={Map} options={{headerShown:false}} />
       <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false}} />
       <Drawer.Screen name="History" component={History} options={{headerShown:false}} />
+      <Drawer.Screen name="DataShow" component={DataShow} options={{headerShown:false}} />
       <Drawer.Screen name="Support" component={Support} options={{headerShown:false}} />
     </Drawer.Navigator>
   );
@@ -38,10 +40,15 @@ const Router = ({currentUser}) => {
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Splash'>
                 {
-                    currentUser && currentUser.email ?
+                    currentUser ?
+                    currentUser.phone && currentUser.email ? 
                     <>
                     <Stack.Screen name="Splash" component={Splash} options={{ headerShown:false }}/>
                     <Stack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown:false}} />
+                    </>
+                    :
+                    <>
+                    <Stack.Screen name="Verify" component={VerifyOTP} options={{headerShown:false}} />
                     </>
                     :
                     <>
