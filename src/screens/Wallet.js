@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet,TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet,TextInput, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native';
 const Paytm = require('paytmchecksum');
 import AllInOneSDKManager from 'paytm_allinone_react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { connect } from 'react-redux';
+import axios from 'axios';
+import { api, callbackUrl, mid } from '../../api.config';
+import { connect, useDispatch } from 'react-redux';
+import { setCurrentUser } from '../redux/user/user.action';
 
 
 const themeColor1 = '#fff';
@@ -13,7 +16,74 @@ const appbar = '#7Cb342';
 
 const vals = ['100','500','1000','2500'];
 function Wallet({navigation,currentUser}) {
+
+    const dispatch = useDispatch();
     const [amount, setAmount] = React.useState("");
+
+    const updateTransaction = (success, data) => {
+        axios({
+            method:'POST',
+            url:`${api}/transaction/status`,
+            data:{
+                orderId:data.orderId,
+                checksum:data.checksum,
+                success:success,
+                amount:data.amount
+            }
+        }).then(({data}) => {
+            console.log({data});
+            dispatch(setCurrentUser(data.user));
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const startTransaction = async() => {
+        try{
+            let { data }  = await axios({
+                method:'POST',
+                url:`${api}/transaction/create`,
+                data:{
+                    userId:currentUser._id,
+                    amount:parseFloat(amount).toFixed(2)
+                }
+            });
+            const { orderId, tranxToken } = data;
+            AllInOneSDKManager.startTransaction(
+                orderId,
+                mid,
+                tranxToken,
+                amount,
+                callbackUrl+orderId,
+                true,
+                false,
+                'paytm'+mid
+               )
+               .then((result) => {
+                   console.log(result);
+                   let data ={
+                    orderId:result["ORDERID"],
+                    checksum:result["CHECKSUMHASH"],
+                    amount:result["TXNAMOUNT"]
+                   }
+                    if(result["STATUS"]==="TXN_SUCCESS"){
+                        updateTransaction(true,data);
+                        ToastAndroid.showWithGravity("Transaction Successfull", ToastAndroid.CENTER, ToastAndroid.LONG);
+                    }else if(result["STATUS"]==="TXN_FAILURE"){
+                        updateTransaction(false,data);
+                        ToastAndroid.showWithGravity("Transaction Failed", ToastAndroid.CENTER, ToastAndroid.LONG)
+                    }else{
+                        ToastAndroid.showWithGravity("Something Went Wrong", ToastAndroid.CENTER, ToastAndroid.LONG)
+                    }
+               })
+               .catch((err) => {
+                console.error(err);
+               });
+        }catch(err){
+            console.log(err);
+        }
+    }
+
     return (
         <View style={styles.main}>
             <View style={styles.head}>
@@ -42,7 +112,7 @@ function Wallet({navigation,currentUser}) {
                         </TouchableOpacity>
                     ))}
                 </View>
-                <TouchableOpacity style={styles.button} activeOpacity={0.6}>
+                <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={startTransaction}>
                     <Text style={{textAlign:'center', fontWeight:'800', color:'#fff', fontSize:18}}>ADD  MONEY</Text>
                 </TouchableOpacity>
                 </ScrollView>
