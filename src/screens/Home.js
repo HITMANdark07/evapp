@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import Ico from 'react-native-vector-icons/MaterialIcons';
 import Ic from 'react-native-vector-icons/Ionicons';
 import Torch from 'react-native-torch';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import {RNCamera} from 'react-native-camera';
 
 const themeColor1 = '#fff';
@@ -68,6 +68,14 @@ const Home = ({navigation,currentUser}) => {
       );
     }
   };
+  const deviceTime = useSelector(state => state.user.time);
+
+  const shouldNavigate = (time) => {
+    if(time && new Date(time).getTime()>Date.now()){
+      return false;
+    }
+    return true;
+  }
   React.useEffect(() => {
     requestPermission();
     () => {
@@ -75,6 +83,7 @@ const Home = ({navigation,currentUser}) => {
       setTorchState(false);
     }
   }, []);
+
   return (
     <View style={{flex: 1}}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -127,7 +136,13 @@ const Home = ({navigation,currentUser}) => {
 
             <View style={styles.quickContainer}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+                <TouchableOpacity onPress={() => {
+                  if(shouldNavigate(deviceTime)){
+                    refRBSheet.current.open()
+                  }else{
+                    navigation.navigate('Charging');
+                  }
+                }}>
                   <View style={styles.quicklelem}>
                     <Ico
                       name="qr-code"
@@ -211,7 +226,13 @@ const Home = ({navigation,currentUser}) => {
             APP
           </Text>
         </View>
-        <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+        <TouchableOpacity onPress={() => {
+          if(shouldNavigate(deviceTime)){
+            refRBSheet.current.open()
+          }else{
+            navigation.navigate('Charging');
+          }
+        }}>
           <View style={styles.menuhead}>
             <Ic name="qr-code" size={25} color={themeColor1} />
           </View>
@@ -223,7 +244,13 @@ const Home = ({navigation,currentUser}) => {
             <Ic name="home" size={25} color={themeColor1} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+        <TouchableOpacity onPress={() => {
+          if(shouldNavigate(deviceTime)){
+            refRBSheet.current.open()
+          }else{
+            navigation.navigate('Charging');
+          }
+        }}>
           <View style={styles.menu}>
             <Ic name="qr-code" size={30} color={themeColor1} />
           </View>
@@ -271,9 +298,13 @@ const Home = ({navigation,currentUser}) => {
             if(barcode.type=='QR_CODE'){
               refRBSheet.current.close();
               Vibration.vibrate(500);
-              navigation.navigate('DataShow', {
-                data:barcode.data
-              });
+              if(shouldNavigate(deviceTime)){
+                navigation.navigate('DataShow', {
+                  data:barcode.data
+                });
+              }else{
+                navigation.navigate('Charging');
+              }
             }else{
               refRBSheet.current.close();
               Vibration.vibrate(1000);

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet,TextInput,Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 const Paytm = require('paytmchecksum');
 import AllInOneSDKManager from 'paytm_allinone_react-native';
@@ -6,68 +6,59 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Ico from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
-import { api } from '../../api.config';
 import moment from 'moment';
-import axios, { Axios } from 'axios';
+import axios from 'axios';
+import { api } from '../../api.config';
 
 
 const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
 const appbar = '#7Cb342';
 
-
-const HistoryCard = ({charging}) => {
-    return(
-        <TouchableOpacity activeOpacity={0.4}>
-              <View style={{display:'flex',flexDirection:'row', margin:10, flex:1, backgroundColor:themeColor2, padding:10, borderRadius:20}}>
-                <Image
-                    source={{uri: `${api}/device/qr/image/${charging?.device?._id}`}}
-                    style={{height: 60, width: 60, borderRadius: 50, alignSelf: 'center'}}
-                />
-                <View style={{flex:1, justifyContent:'center', flexDirection:'column'}}>
-                    <View style={{flexDirection:'row'}}>
-                    <Text style={{color:'#fff', marginLeft:15, fontSize:18}}>Amount: ₹{charging.amount}/-</Text>
-                    <Text style={{backgroundColor:charging.status==='CHARGING' ? 'yellow' : 'green', marginLeft:5, padding:10, paddingVertical:2, fontWeight:'500', borderRadius:10, color:charging.status==='CHARGING' ? '#000':'#fff'}}>
-                        {charging.status}
-                    </Text>
-                    </View>
-                    <Text style={{color:'#fff', marginLeft:15,fontSize:12, fontWeight:'300'}}>Device ID: {charging?.device?.code}</Text>
-                    <Text style={{color:'#fff', marginLeft:15,fontSize:10, fontWeight:'300'}}>created on: {moment(charging.createdAt).fromNow()}</Text>
+const TransactionCard = ({transaction}) => {
+      return(
+          <TouchableOpacity activeOpacity={0.4}>
+                <View style={{display:'flex',flexDirection:'row', margin:10, flex:1, backgroundColor:themeColor2, padding:10, borderRadius:20}}>
+                  <Image
+                      source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8kIvj19ydPyz9xLz239ld6OLICeVttaGNtw&usqp=CAU'}}
+                      style={{height: 60, width: 60, borderRadius: 50, alignSelf: 'center'}}
+                  />
+                  <View style={{flex:1, justifyContent:'center', flexDirection:'column'}}>
+                      <View style={{flexDirection:'row'}}>
+                      <Text style={{color:'#fff', marginLeft:15, fontSize:18}}>Amount: ₹{transaction.amount}/-</Text>
+                      <Text style={{backgroundColor:transaction.status==='PENDING' ? 'yellow' : transaction.status==="SUCCESS" ? 'green' : 'red', marginLeft:5, padding:10, paddingVertical:2, fontWeight:'500', borderRadius:10, color:transaction.status==='PENDING' ? '#000':'#fff'}}>
+                          {transaction.status}
+                      </Text>
+                      </View>
+                      <Text style={{color:'#fff', marginLeft:15,fontSize:12, fontWeight:'300'}}>Transaction ID: {transaction._id}</Text>
+                      <Text style={{color:'#fff', marginLeft:15,fontSize:10, fontWeight:'300'}}>created on: {moment(transaction.createdAt).fromNow()}</Text>
+                  </View>
                 </View>
-              </View>
-          </TouchableOpacity>
-    )
-}
+            </TouchableOpacity>
+      )
+  }
 
-
-function History({navigation,currentUser}) {
-    const [histories, setHistories] = React.useState([]);
+function Transactions({navigation,currentUser}) {
+    const [transactions, setTransactions] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const limit = 10;
     const [skip, setSkip] = useState(0);
     const init = () => {
-        let cancelToken = axios.CancelToken.source();
         setLoading(true);
         axios({
             method:'GET',
-            url:`${api}/charge/list/${currentUser._id}?limit=${limit}&skip=${skip}`,
-            cancelToken:cancelToken.token
+            url:`${api}/transactions/list/${currentUser._id}?limit=${limit}&skip=${skip}`
         }).then(({data}) => {
-            // console.log(data)
-            setHistories(data.chargings);
+            setTransactions(data.transactions);
             setLoading(false);
         }).catch((err) => {
             console.log(err);
             setLoading(false);
         })
-        return cancelToken;
     }
 
     useEffect(() => {
-        let cToken = init();
-        return () => {
-            cToken.cancel();
-        }
+        init();
     },[]);
     return (
         <View style={styles.main}>
@@ -75,19 +66,19 @@ function History({navigation,currentUser}) {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Icon name="arrow-back" size={35} />
                 </TouchableOpacity>
-                <Text style={styles.hText}>Charging History</Text>
+                <Text style={styles.hText}>Transactions History</Text>
             </View>
             <View style={styles.container}>
             {loading && <ActivityIndicator size="large" color={appbar} />}
             <ScrollView showsVerticalScrollIndicator={false}>
                 
-            {histories.length===0 && !loading &&
+            {transactions.length===0 && !loading &&
             <>
-            <Text style={styles.noh}>No History Available</Text>
+            <Text style={styles.noh}>No Transactions Available</Text>
             <Ico name='sad-tear' color={appbar} size={70} style={{alignSelf:'center', marginTop:20}} />
             </>}
-            {histories.map((charging) => (
-                <HistoryCard key={charging._id} charging={charging} />
+            {transactions.map((transaction) => (
+                <TransactionCard key={transaction._id} transaction={transaction} />
             ))}
             </ScrollView>
             </View>
@@ -112,10 +103,10 @@ const styles = StyleSheet.create({
     },
     hText:{
         fontSize:25,
-        marginLeft:20,
+        marginLeft:15,
         fontWeight:'800',
         color:themeColor2,
-        letterSpacing:4
+        letterSpacing:2
     },
     noh:{
         textAlign:'center',
@@ -129,7 +120,6 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         // justifyContent:'center',
         marginTop:80
-
     },
 })
 
@@ -138,4 +128,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps)(History);
+export default connect(mapStateToProps)(Transactions);

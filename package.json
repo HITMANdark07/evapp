@@ -19,6 +19,7 @@
     "axios": "^0.24.0",
     "crypto": "^1.0.1",
     "lottie-react-native": "^5.0.1",
+    "moment": "^2.29.3",
     "paytm_allinone_react-native": "^1.1.0",
     "paytmchecksum": "^1.5.0",
     "react": "17.0.2",

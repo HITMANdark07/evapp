@@ -6,12 +6,14 @@ import {
   PermissionsAndroid,
   Text,
   Image,
+  Vibration
 } from 'react-native';
 import usr from '../../assets/user.png'
 import Geolocation from 'react-native-geolocation-service';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import LottieView from 'lottie-react-native';
 import Torch from 'react-native-torch';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {RNCamera} from 'react-native-camera';
 import { api } from '../../api.config';
@@ -83,6 +85,15 @@ const Home = ({navigation}) => {
   }
   const [torchState, setTorchState] = React.useState(0);
   const refRBSheet = useRef();
+  const deviceTime = useSelector(state => state.user.time);
+
+  const shouldNavigate = (time) => {
+    console.log(time);
+    if(time && new Date(time).getTime()>Date.now()){
+      return false;
+    }
+    return true;
+  }
   const camRef = useRef();
   const requestPermission = async () => {
     const granted = await PermissionsAndroid.check(
@@ -165,7 +176,13 @@ const Home = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+        <TouchableOpacity onPress={() => {
+          if(shouldNavigate(deviceTime)){
+            refRBSheet.current.open()
+          }else{
+            navigation.navigate('Charging');
+          }
+        }}>
           <View style={styles.menuhead}>
             <Ic name="qr-code" size={25} color={themeColor1} />
           </View>
@@ -201,7 +218,13 @@ const Home = ({navigation}) => {
             <Ic name="home" size={25} color={themeColor1} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+        <TouchableOpacity onPress={() => {
+          if(shouldNavigate(deviceTime)){
+            refRBSheet.current.open()
+          }else{
+            navigation.navigate('Charging');
+          }
+        }}>
           <View style={styles.menuqr}>
             <Ic name="qr-code" size={30} color={themeColor1} />
           </View>

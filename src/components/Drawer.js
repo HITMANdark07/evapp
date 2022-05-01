@@ -6,6 +6,7 @@ import {
 } from '@react-navigation/drawer';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ic from "react-native-vector-icons/Entypo";
 import Ico from "react-native-vector-icons/MaterialIcons";
 import { TouchableOpacity } from 'react-native';
@@ -78,6 +79,12 @@ function CustomDrawer({navigation,currentUser,setUser}) {
       <View style={styles.drawerMenu}>
           <Ico name="history" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>History</Text>
+      </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Transactions')}>
+      <View style={styles.drawerMenu} >
+          <Icons name="bank-transfer" style={styles.icon} color={themeColor1} size={30} />
+          <Text style={styles.menuText}>Transactions</Text>
       </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>

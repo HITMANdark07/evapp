@@ -1,7 +1,10 @@
 import {userActionTypes} from './user.types';
 
 const INITIAL_STATE = {
-    currentUser:null
+    currentUser:null,
+    device:null,
+    time:null,
+    startTime:null
 }
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -11,7 +14,21 @@ const userReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 currentUser:action.payload,
             }
-
+        case userActionTypes.SET_DEVICE:
+            return {
+                ...state,
+                device:action.payload
+            }
+        case userActionTypes.SET_DEVICE_TIME:
+            return {
+                ...state,
+                time:action.payload
+            }
+        case userActionTypes.SET_START_TIME:
+            return {
+                ...state,
+                startTime:action.payload
+            }
         default:
             return state;
     }

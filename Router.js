@@ -14,10 +14,12 @@ import Login from './src/screens/Login';
 import Map from './src/screens/Map';
 import Wallet from './src/screens/Wallet';
 import History from './src/screens/History';
+import Transactions from './src/screens/Transactions';
 LogBox.ignoreLogs(['Reanimated 2']);
 import { connect } from 'react-redux';
 import Support from './src/screens/Support';
 import VerifyOTP from './src/screens/VerifyOTP';
+import Charging from './src/screens/Charging';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -25,13 +27,15 @@ const Drawer = createDrawerNavigator();
 function HomeScreen() {
   return (
     <Drawer.Navigator screenOptions={{drawerStyle:{backgroundColor:'transparent'}}} drawerContent={(props) => <CustomDrawer {...props}  /> }>
-      <Drawer.Screen name="Home" component={Home} options={{headerShown:false}} />
-      <Drawer.Screen name="Profile" component={Profile} options={{headerShown:false}} />
-      <Drawer.Screen name="Maps" component={Map} options={{headerShown:false}} />
-      <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false}} />
-      <Drawer.Screen name="History" component={History} options={{headerShown:false}} />
-      <Drawer.Screen name="DataShow" component={DataShow} options={{headerShown:false}} />
-      <Drawer.Screen name="Support" component={Support} options={{headerShown:false}} />
+      <Drawer.Screen name="Home" component={Home} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Profile" component={Profile} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Maps" component={Map} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Wallet" component={Wallet} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="History" component={History} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="DataShow" component={DataShow} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Support" component={Support} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Transactions" component={Transactions} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Charging" component={Charging} options={{headerShown:false,unmountOnBlur:true}} />
     </Drawer.Navigator>
   );
 }

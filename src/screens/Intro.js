@@ -88,7 +88,7 @@ const App = ({navigation})  => {
 
   const screen = ({item}) => {
     return(
-    <View style={styles.slide} style={{backgroundColor:item.backgroundColor,flex:2}}>
+    <View style={{...styles.slide,backgroundColor:item.backgroundColor,flex:2}} >
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.data} >{item.data}</Text>
       <LottieView
