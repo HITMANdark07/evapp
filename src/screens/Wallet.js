@@ -80,7 +80,7 @@ function Wallet({navigation,currentUser}) {
                 console.error(err);
                });
         }catch(err){
-            console.log(err);
+            console.log("here...!",err);
         }
     }
 

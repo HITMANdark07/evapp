@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import Support from './src/screens/Support';
 import VerifyOTP from './src/screens/VerifyOTP';
 import Charging from './src/screens/Charging';
+import SplashScreen from  "react-native-splash-screen";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -40,6 +41,10 @@ function HomeScreen() {
   );
 }
 const Router = ({currentUser}) => {
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  },[]);
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Splash'>

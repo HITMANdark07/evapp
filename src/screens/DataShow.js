@@ -8,7 +8,7 @@ import { api } from '../../api.config';
 import moment from 'moment';
 import axios from 'axios';
 import CircularProgress from '../components/CircularProgress';
-import { setDevice, setDeviceTime, setStartTime } from '../redux/user/user.action';
+import { setCurrentUser, setDevice, setDeviceTime, setStartTime } from '../redux/user/user.action';
 
 const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
@@ -42,6 +42,19 @@ function DataShow({navigation,currentUser, route}) {
         }))
     }
 
+    const updatingUserData = () => {
+        return new Promise((resolve, reject) => {
+            axios({
+                method:'GET',
+                url:`${api}/user/get-profile/${currentUser._id}`
+            }).then(({data}) => {
+                resolve(data.user);
+            }).catch((err) => {
+                reject("Failed to get Data");
+            })
+        })
+    }
+    
     const startPolling = () => {
         setTimeout(() => {
             setLoading2(true);
@@ -55,7 +68,9 @@ function DataShow({navigation,currentUser, route}) {
                     userId:currentUser._id,
                     deviceId:deviceId
                 }
-              }).then(({data}) => {
+              }).then(async({data}) => {
+                updatingUserData().then((res) => {
+                dispatch(setCurrentUser(res));
                 dispatch(setDevice(data.device));
                 dispatch(setDeviceTime(new Date(data.time)));
                 dispatch(setStartTime(new Date()));
@@ -65,6 +80,9 @@ function DataShow({navigation,currentUser, route}) {
                 setTimeout(() => {
                     navigation.navigate('Charging');
                 },100);
+                }).catch((err) => {
+                    console.log(err);
+                })
               }).catch((err) => {
                 console.log(err);
                 console.log("re requesting");

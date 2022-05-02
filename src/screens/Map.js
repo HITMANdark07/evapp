@@ -6,7 +6,8 @@ import {
   PermissionsAndroid,
   Text,
   Image,
-  Vibration
+  Vibration,
+  Linking
 } from 'react-native';
 import usr from '../../assets/user.png'
 import Geolocation from 'react-native-geolocation-service';
@@ -139,7 +140,6 @@ const Home = ({navigation}) => {
       setTorchState(false);
     };
   }, []);
-
   
   return (
     <View style={{flex: 1}}>
@@ -194,7 +194,9 @@ const Home = ({navigation}) => {
         style={{position: 'absolute', bottom: 110}}>
         <View style={{flexDirection: 'row'}}>
           {devices.map((device) => (
-            <TouchableOpacity style={styles.hView} key={device.code} activeOpacity={0.5}>
+            <TouchableOpacity style={styles.hView} key={device.code} activeOpacity={0.5} onPress={() => {
+              Linking.openURL(`https://maps.google.com?daddr=${device.location.latitude},${device.location.longitude}`)
+            }} >
             <View style={styles.cardContainer}>
               <Image style={{width: 60, height: 80, backgroundColor: '#fff'}} source={{uri:"https://www.eee.upd.edu.ph/sites/default/files/media/news/rapid-electric-vehicle-charging-%E2%80%93-charging-minutes-charm/5-charm-rapid-charging-station.jpg"}}/>
               <View style={styles.cardContents}>
