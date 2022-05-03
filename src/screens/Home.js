@@ -78,7 +78,7 @@ const Home = ({navigation,currentUser}) => {
   }
   React.useEffect(() => {
     requestPermission();
-    () => {
+    return () => {
       Torch.switchState(false);
       setTorchState(false);
     }
@@ -106,7 +106,7 @@ const Home = ({navigation,currentUser}) => {
               <Image
                 style={{
                   width: '92%',
-                  height: 200,
+                  height: 280,
                   alignSelf: 'center',
                   borderColor: themeColor2,
                   borderWidth: 1,
@@ -134,8 +134,8 @@ const Home = ({navigation,currentUser}) => {
               Quick Actions
             </Text>
 
-            <View style={styles.quickContainer}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} >
+              <View style={styles.quickContainer} >
                 <TouchableOpacity onPress={() => {
                   if(shouldNavigate(deviceTime)){
                     refRBSheet.current.open()
@@ -203,8 +203,8 @@ const Home = ({navigation,currentUser}) => {
                     <Text style={styles.quickText}>Locate</Text>
                   </View>
                 </TouchableOpacity>
+                </View>
               </ScrollView>
-            </View>
           </View>
         </View>
 
@@ -377,7 +377,8 @@ const styles = StyleSheet.create({
   quickContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    flexWrap:'wrap',
+    justifyContent: 'space-evenly',
   },
   quickText: {
     color: themeColor1,
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
     width: 100,
     margin: 10,
     borderRadius: 10,
-    padding: 10,
+    padding: 15,
     flexDirection: 'column',
     justifyContent: 'center',
     borderColor: themeColor2,
