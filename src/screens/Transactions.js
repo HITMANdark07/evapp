@@ -43,13 +43,15 @@ function Transactions({navigation,currentUser}) {
     const [loading, setLoading] = React.useState(false);
     const limit = 10;
     const [skip, setSkip] = useState(0);
-    const init = () => {
+    const [shouldSendReq, setShouldSendReq] = useState(true);
+    const init = (limit, skip) => {
         setLoading(true);
         axios({
             method:'GET',
             url:`${api}/transactions/list/${currentUser._id}?limit=${limit}&skip=${skip}`
         }).then(({data}) => {
-            setTransactions(data.transactions);
+            setTransactions((prevData) => [...prevData,...data.transactions]);
+            if(data.transactions.length<limit) setShouldSendReq(false);
             setLoading(false);
         }).catch((err) => {
             console.log(err);
@@ -58,8 +60,15 @@ function Transactions({navigation,currentUser}) {
     }
 
     useEffect(() => {
-        init();
-    },[]);
+        init(limit,skip);
+    },[limit, skip]);
+    const fetchMoreRecords = () => {
+        if(shouldSendReq){
+            setSkip((prev) => prev+limit);
+        }else{
+            console.log("No more records");
+        }
+    }
     return (
         <View style={styles.main}>
             <View style={styles.head}>
@@ -69,17 +78,16 @@ function Transactions({navigation,currentUser}) {
                 <Text style={styles.hText}>Transactions History</Text>
             </View>
             <View style={styles.container}>
-            {loading && <ActivityIndicator size="large" color={appbar} />}
-            <ScrollView showsVerticalScrollIndicator={false}>
-                
+            <ScrollView showsVerticalScrollIndicator={false} onEnded={fetchMoreRecords}>
             {transactions.length===0 && !loading &&
             <>
             <Text style={styles.noh}>No Transactions Available</Text>
             <Ico name='sad-tear' color={appbar} size={70} style={{alignSelf:'center', marginTop:20}} />
             </>}
-            {transactions.map((transaction) => (
-                <TransactionCard key={transaction._id} transaction={transaction} />
+            {transactions.map((transaction,i) => (
+                <TransactionCard key={i} transaction={transaction} />
             ))}
+            {loading && <ActivityIndicator size="large" color={appbar} />}
             </ScrollView>
             </View>
         </View>

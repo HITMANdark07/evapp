@@ -63,7 +63,7 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           <Text style={styles.menuText}>I am Host</Text>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
       <View style={styles.drawerMenu}>
           <Icon name="flash" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>Add Charger</Text>
@@ -74,7 +74,7 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           <Ico name="verified" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>Complete KYC</Text>
       </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity onPress={() => navigation.navigate('History')}>
       <View style={styles.drawerMenu}>
           <Ico name="history" style={styles.icon} color={themeColor1} size={30} />

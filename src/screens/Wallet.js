@@ -19,6 +19,7 @@ function Wallet({navigation,currentUser}) {
 
     const dispatch = useDispatch();
     const [amount, setAmount] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
     const updateTransaction = (success, data) => {
         axios({
@@ -39,6 +40,12 @@ function Wallet({navigation,currentUser}) {
     }
 
     const startTransaction = async() => {
+        setLoading(true);
+        if(amount<25){
+            setLoading(false);
+            ToastAndroid.showWithGravity("Please Enter amount greater than 25", ToastAndroid.CENTER, ToastAndroid.LONG);
+            return;
+        }
         try{
             let { data }  = await axios({
                 method:'POST',
@@ -48,7 +55,9 @@ function Wallet({navigation,currentUser}) {
                     amount:parseFloat(amount).toFixed(2)
                 }
             });
+            setLoading(false);
             const { orderId, tranxToken } = data;
+            console.log(tranxToken,orderId);
             AllInOneSDKManager.startTransaction(
                 orderId,
                 mid,
@@ -75,11 +84,13 @@ function Wallet({navigation,currentUser}) {
                     }else{
                         ToastAndroid.showWithGravity("Something Went Wrong", ToastAndroid.CENTER, ToastAndroid.LONG)
                     }
+                    setAmount("");
                })
                .catch((err) => {
                 console.error(err);
                });
         }catch(err){
+            setLoading(false);
             console.log("here...!",err);
         }
     }
@@ -93,7 +104,6 @@ function Wallet({navigation,currentUser}) {
                 <Text style={styles.hText}>Wallet</Text>
             </View>
             <View style={styles.container}>
-            {/* <ActivityIndicator size="large" color={appbar} /> */}
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Icon name="wallet" size={60} style={styles.wallet} color={appbar} />
                 <View style={styles.moneyContainer}>
@@ -112,9 +122,13 @@ function Wallet({navigation,currentUser}) {
                         </TouchableOpacity>
                     ))}
                 </View>
-                <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={startTransaction}>
+                {loading ? 
+                    <ActivityIndicator size="large" color={appbar} />
+                    :
+                    <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={startTransaction}>
                     <Text style={{textAlign:'center', fontWeight:'800', color:'#fff', fontSize:18}}>ADD  MONEY</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                }
                 </ScrollView>
             </View>
         </View>

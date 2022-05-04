@@ -45,7 +45,8 @@ function History({navigation,currentUser}) {
     const [loading, setLoading] = React.useState(false);
     const limit = 10;
     const [skip, setSkip] = useState(0);
-    const init = () => {
+    const [shouldSendReq, setShouldSendReq] = useState(true);
+    const init = (limit,skip) => {
         let cancelToken = axios.CancelToken.source();
         setLoading(true);
         axios({
@@ -54,7 +55,8 @@ function History({navigation,currentUser}) {
             cancelToken:cancelToken.token
         }).then(({data}) => {
             // console.log(data)
-            setHistories(data.chargings);
+            setHistories((prevData => [...prevData,...data.chargings]));
+            if(data.chargings.length<limit) setShouldSendReq(false);
             setLoading(false);
         }).catch((err) => {
             console.log(err);
@@ -64,11 +66,18 @@ function History({navigation,currentUser}) {
     }
 
     useEffect(() => {
-        let cToken = init();
+        let cToken = init(limit,skip);
         return () => {
             cToken.cancel();
         }
-    },[]);
+    },[limit,skip]);
+    const fetchMoreRecords = () => {
+        if(shouldSendReq){
+            setSkip((prev) => prev+limit);
+        }else{
+            console.log("No more records");
+        }
+    }
     return (
         <View style={styles.main}>
             <View style={styles.head}>
@@ -78,8 +87,7 @@ function History({navigation,currentUser}) {
                 <Text style={styles.hText}>Charging History</Text>
             </View>
             <View style={styles.container}>
-            {loading && <ActivityIndicator size="large" color={appbar} />}
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} onEnded={fetchMoreRecords}>
                 
             {histories.length===0 && !loading &&
             <>
@@ -89,6 +97,7 @@ function History({navigation,currentUser}) {
             {histories.map((charging) => (
                 <HistoryCard key={charging._id} charging={charging} />
             ))}
+            {loading && <ActivityIndicator size="large" color={appbar} />}
             </ScrollView>
             </View>
         </View>
