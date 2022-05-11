@@ -33,14 +33,6 @@ const slides = [
   }
 ];
 const styles = StyleSheet.create({
-  buttonCircle: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(0, 0, 0, .2)',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   slide:{
     display:'flex',
     flexDirection: 'column',
@@ -82,7 +74,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const App = ({navigation})  => {
+const Intro = ({navigation})  => {
 
   const [showApp, setShowApp] = React.useState(false);
 
@@ -110,4 +102,4 @@ const App = ({navigation})  => {
 };
 
 
-export default App;
+export default Intro;

@@ -57,19 +57,19 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           <Text style={styles.menuText}>Hi, {currentUser && currentUser.name ? currentUser.name.split(" ")[0] : "USER"}</Text>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-      <View style={styles.drawerMenu}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate('Host')}>
+      <View style={styles.drawerMenu} >
           <Ic name="location" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>I am Host</Text>
       </View>
-      </TouchableOpacity>
-      {/* <TouchableOpacity>
-      <View style={styles.drawerMenu}>
+      </TouchableOpacity> */}
+      <TouchableOpacity onPress={() => navigation.navigate('Withdraw')}>
+      <View style={styles.drawerMenu} >
           <Icon name="flash" style={styles.icon} color={themeColor1} size={30} />
-          <Text style={styles.menuText}>Add Charger</Text>
+          <Text style={styles.menuText}>Withdrawls</Text>
       </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      {/* <TouchableOpacity>
       <View style={styles.drawerMenu}>
           <Ico name="verified" style={styles.icon} color={themeColor1} size={30} />
           <Text style={styles.menuText}>Complete KYC</Text>

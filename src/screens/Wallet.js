@@ -5,7 +5,7 @@ import AllInOneSDKManager from 'paytm_allinone_react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { api, callbackUrl, mid } from '../../api.config';
+import { api, callbackUrl,production_callbackUrl, mid } from '../../api.config';
 import { connect, useDispatch } from 'react-redux';
 import { setCurrentUser } from '../redux/user/user.action';
 
@@ -41,11 +41,11 @@ function Wallet({navigation,currentUser}) {
 
     const startTransaction = async() => {
         setLoading(true);
-        if(amount<25){
-            setLoading(false);
-            ToastAndroid.showWithGravity("Please Enter amount greater than 25", ToastAndroid.CENTER, ToastAndroid.LONG);
-            return;
-        }
+        // if(amount<25){
+        //     setLoading(false);
+        //     ToastAndroid.showWithGravity("Please Enter amount greater than 25", ToastAndroid.CENTER, ToastAndroid.LONG);
+        //     return;
+        // }
         try{
             let { data }  = await axios({
                 method:'POST',
@@ -57,19 +57,19 @@ function Wallet({navigation,currentUser}) {
             });
             setLoading(false);
             const { orderId, tranxToken } = data;
-            console.log(tranxToken,orderId);
+            console.log(orderId,tranxToken);
             AllInOneSDKManager.startTransaction(
                 orderId,
                 mid,
                 tranxToken,
                 amount,
-                callbackUrl+orderId,
-                true,
+                production_callbackUrl+orderId,
+                false,
                 false,
                 'paytm'+mid
                )
                .then((result) => {
-                   console.log(result);
+                   console.log(result,"result");
                    let data ={
                     orderId:result["ORDERID"],
                     checksum:result["CHECKSUMHASH"],
@@ -82,6 +82,7 @@ function Wallet({navigation,currentUser}) {
                         updateTransaction(false,data);
                         ToastAndroid.showWithGravity("Transaction Failed", ToastAndroid.CENTER, ToastAndroid.LONG)
                     }else{
+                        updateTransaction(false,data);
                         ToastAndroid.showWithGravity("Something Went Wrong", ToastAndroid.CENTER, ToastAndroid.LONG)
                     }
                     setAmount("");

@@ -21,6 +21,8 @@ import Support from './src/screens/Support';
 import VerifyOTP from './src/screens/VerifyOTP';
 import Charging from './src/screens/Charging';
 import SplashScreen from  "react-native-splash-screen";
+import Host from './src/screens/Host';
+import Withdraw from './src/screens/Withdraw';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -37,6 +39,8 @@ function HomeScreen() {
       <Drawer.Screen name="Support" component={Support} options={{headerShown:false,unmountOnBlur:true}} />
       <Drawer.Screen name="Transactions" component={Transactions} options={{headerShown:false,unmountOnBlur:true}} />
       <Drawer.Screen name="Charging" component={Charging} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Host" component={Host} options={{headerShown:false,unmountOnBlur:true}} />
+      <Drawer.Screen name="Withdraw" component={Withdraw} options={{headerShown:false,unmountOnBlur:true}} />
     </Drawer.Navigator>
   );
 }
@@ -61,7 +65,7 @@ const Router = ({currentUser}) => {
                     </>
                     :
                     <>
-                    <Stack.Screen name="Splash" component={Splash} options={{ headerShown:false }}/>
+                    <Stack.Screen name="Splash" component={Splash} options={{headerShown:false }}/>
                     <Stack.Screen name="Intro" component={Intro} options={{headerShown:false}}/>
                     <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
                     </>
