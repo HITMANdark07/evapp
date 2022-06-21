@@ -41,11 +41,11 @@ function Wallet({navigation,currentUser}) {
 
     const startTransaction = async() => {
         setLoading(true);
-        // if(amount<25){
-        //     setLoading(false);
-        //     ToastAndroid.showWithGravity("Please Enter amount greater than 25", ToastAndroid.CENTER, ToastAndroid.LONG);
-        //     return;
-        // }
+        if(amount<25){
+            setLoading(false);
+            ToastAndroid.showWithGravity("Please Enter amount greater than 25", ToastAndroid.CENTER, ToastAndroid.LONG);
+            return;
+        }
         try{
             let { data }  = await axios({
                 method:'POST',
@@ -108,7 +108,7 @@ function Wallet({navigation,currentUser}) {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Icon name="wallet" size={60} style={styles.wallet} color={appbar} />
                 <View style={styles.moneyContainer}>
-                    <Text style={styles.money}>₹ {currentUser.balance}</Text>
+                    <Text style={styles.money}>₹ {currentUser.balance?.toFixed(2)}</Text>
                     <Text>Current Balance</Text>
                 </View>
                 <View style={styles.amountContainer}>

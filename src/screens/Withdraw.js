@@ -154,7 +154,7 @@ function Withdraw({navigation,currentUser}) {
 
             <View style={{display:'flex',alignItems:'center', flexDirection:'column'}}>
                 <Icon name="wallet" size={60} color={appbar} />
-                <Text style={styles.moneytxt}>₹{currentUser.balance}/-</Text>
+                <Text style={styles.moneytxt}>₹{currentUser?.balance?.toFixed(2)}/-</Text>
             </View>
             <View style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly',marginTop:15}}>
                 <TouchableOpacity style={{backgroundColor:'green', minWidth:80, borderRadius:10, padding:10,borderColor:appbar,borderWidth: screen==='UPI'? 3 :0}}

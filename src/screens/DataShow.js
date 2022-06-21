@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { View, Text, StyleSheet,TextInput,Image, TouchableOpacity, ActivityIndicator, ToastAndroid } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -19,6 +19,8 @@ function DataShow({navigation,currentUser, route}) {
     const [readyUse, setReadyUse] = useState(false);
     const {data} = route.params;
     const {deviceId} = JSON.parse(data);
+    const intrv = useRef(null)
+    const out = useRef(null);
     const [loading, setLoading] = useState(false);
     const [loading2, setLoading2] = useState(false);
     const [deviceCode, setDeviceCode] = useState('Loading...')
@@ -26,11 +28,13 @@ function DataShow({navigation,currentUser, route}) {
     const [progress, setProgress] = useState(0);
     const [rate, setRate] = useState(0);
     const [time, setTime] = useState(15);
+    const [chargeData, setChargeData] = useState(null);
     const [sendingData,setSendingData] = useState({
         user:currentUser._id,
         device:deviceId,
         amount:0,
-        time:15*60*1000
+        time:3*60*1000,
+        // time:60000
     })
     const dispatch = useDispatch();
     const timeHandler = (e) => {
@@ -38,7 +42,7 @@ function DataShow({navigation,currentUser, route}) {
         setSendingData((prevData) => ({
             ...prevData,
             time:e,
-            amount:+((rate*parseFloat((e/60000))).toFixed(2))
+            // amount:+((rate*parseFloat((e/60000))).toFixed(2))
         }))
     }
 
@@ -54,50 +58,88 @@ function DataShow({navigation,currentUser, route}) {
             })
         })
     }
-    
-    const startPolling = () => {
-        setTimeout(() => {
-            setLoading2(true);
-            let timo;
-            let intv = setInterval(() => {
-              // request status 200 intv
-              axios({
-                method:'POST',
-                url:`${api}/charge/confirm`,
-                data:{
-                    userId:currentUser._id,
-                    deviceId:deviceId
-                }
-              }).then(async({data}) => {
-                updatingUserData().then((res) => {
-                dispatch(setCurrentUser(res));
-                dispatch(setDevice(data.device));
-                dispatch(setDeviceTime(new Date(data.time)));
-                dispatch(setStartTime(new Date()));
-                setLoading2(false);
-                clearInterval(intv);
-                clearTimeout(timo);
-                setTimeout(() => {
-                    navigation.navigate('Charging');
-                },100);
-                }).catch((err) => {
-                    console.log(err);
-                })
-              }).catch((err) => {
-                console.log(err);
-                console.log("re requesting");
-              })
-              console.log("sending request");
-            },2000);
-
-            timo = setTimeout(() => {
-              clearInterval(intv);
-              setLoading2(false);
-              ToastAndroid.showWithGravity("Server TimeOut...!",ToastAndroid.CENTER, ToastAndroid.LONG);
-            },300000);
-            
-          },1000)
+    const createCharging = () => {
+        axios({
+            method:'POST',
+            url:`${api}/charge/create`,
+            data:sendingData
+        }).then(({data}) =>{
+            console.log(data);
+            setChargeData(data);
+            startPolling(data._id,data);
+        }).catch((err)=>{
+            ToastAndroid.showWithGravity(err?.response?.data?.message,ToastAndroid.CENTER,ToastAndroid.LONG);
+        })
     }
+
+    // const sendingMessage = (data) => {
+    //     axios({
+    //         method:'POST',
+    //         url:`${api}/charge/send-sms`,
+    //         data:{
+    //             device:data.device,
+    //             chargeId:data._id
+    //         }
+    //     }).then(({data}) => {
+    //         if(data.success){
+    //             startPolling(data._id)
+    //         }else{
+    //             console.log(data);
+    //         }
+    //     }).catch((err) => {
+    //         ToastAndroid.showWithGravity(err?.response?.data?.message,ToastAndroid.CENTER,ToastAndroid.LONG);
+    //     })
+    // }
+    
+    const startPolling = (chargeId,chargeData) => {
+        setLoading2(true);
+        intrv.current = setInterval(() => {
+            // request status 200 intv
+            axios({
+            method:'GET',
+            url:`${api}/charge/confirming/${chargeId}`,
+            }).then(async({data}) => {
+            console.log(data,chargeData,"******receiving data");
+            if(data){
+                if(chargeData!==null){
+                    updatingUserData().then((res) => {
+                    dispatch(setCurrentUser(res));
+                    dispatch(setDevice(chargeData.device));
+                    dispatch(setDeviceTime(new Date(Date.now()+data)));
+                    dispatch(setStartTime(new Date()));
+                    setLoading2(false);
+                    clearInterval(intrv.current);
+                    clearTimeout(out.current);
+                    setTimeout(() => {
+                        navigation.navigate('Charging');
+                    },100);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                }
+            }
+            }).catch((err) => {
+            console.log(err);
+            console.log("re requesting");
+            })
+            console.log("sending request");
+        },2000);
+        
+        out.current = setTimeout(() => {
+            clearInterval(intrv.current);
+            setLoading2(false);
+            ToastAndroid.showWithGravity("Server TimeOut...!",ToastAndroid.CENTER, ToastAndroid.LONG);
+        },120000);
+        
+
+    }
+
+    useEffect(() => {
+        return () => {
+            clearInterval(intrv.current);
+            clearTimeout(out.current);
+        }
+    },[])
 
     const init = () => {
         setLoading(true);
@@ -112,12 +154,14 @@ function DataShow({navigation,currentUser, route}) {
                 ToastAndroid.showWithGravity("Device is Ready to use", ToastAndroid.CENTER, ToastAndroid.LONG);
             }else{
                 setDeviceCode("Unavailable");
+                setLoading(false);
                 ToastAndroid.showWithGravity("Device is Unavailable", ToastAndroid.CENTER, ToastAndroid.LONG);
             }
             setRate(data.rate);
             setSendingData((prevState)=>({
                 ...prevState,
-                amount:+((data.rate*parseFloat((prevState.time/60000))).toFixed(2))
+                // amount:+((data.rate*parseFloat((prevState.time/60000))).toFixed(2))
+                amount:0
             }));
             setLoading(false);
         }).catch((err) => {
@@ -150,6 +194,7 @@ function DataShow({navigation,currentUser, route}) {
             {/* <CircularProgress percent={progress} size={200} wide={10} progressColor={themeColor2} backgroundColor="#D3D3D3" fontColor="grey" /> */}
             <Image source={{uri:`${api}/device/qr/image/${deviceId}`}} style={{width:'70%', height:250}} />
             </View>
+            <Text style={{textAlign:'center'}}>{deviceId}</Text>
             {readyUse && 
             <View>
             <View style={styles.amountContainer}>
@@ -168,7 +213,7 @@ function DataShow({navigation,currentUser, route}) {
             {readyUse && !loading2 ? <TouchableOpacity style={styles.button} activeOpacity={0.6} onPress={() => {
                 if(currentUser.balance>=sendingData.amount){
                     console.log(sendingData);
-                    startPolling();
+                    createCharging();
                 }else{
                     ToastAndroid.showWithGravity("Please Recharge Your Wallet",ToastAndroid.CENTER, ToastAndroid.LONG);
                     navigation.navigate('Wallet');
