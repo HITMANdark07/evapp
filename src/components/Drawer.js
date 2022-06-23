@@ -44,9 +44,10 @@ function CustomDrawer({navigation,currentUser,setUser}) {
           margin:10,
           marginBottom:20
         }}>
-          <Text style={{fontSize:40, color:'#fff', fontWeight:'700'}}>EV 
+          <Text style={{fontSize:40, color:'#fff', fontWeight:'700'}}>
+            Ero 
           <Ico name="flash-on" size={30}  />
-           APP</Text>
+           Ev</Text>
         </View>
       {/* </View> */}
       <ScrollView showsVerticalScrollIndicator={false}>

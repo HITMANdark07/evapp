@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -14,10 +14,14 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import LottieView from 'lottie-react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import Ico from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
 import Ic from 'react-native-vector-icons/Ionicons';
+import { api } from '../../api.config';
 import Torch from 'react-native-torch';
 import { connect, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {RNCamera} from 'react-native-camera';
+import { setCurrentUser } from '../redux/user/user.action';
 
 const themeColor1 = '#fff';
 const themeColor2 = '#33691E';
@@ -68,6 +72,7 @@ const Home = ({navigation,currentUser}) => {
       );
     }
   };
+  const dispatch = useDispatch();
   const deviceTime = useSelector(state => state.user.time);
 
   const shouldNavigate = (time) => {
@@ -83,6 +88,20 @@ const Home = ({navigation,currentUser}) => {
       setTorchState(false);
     }
   }, []);
+
+  const getUserProfile = () => {
+    axios({
+      method:'GET',
+      url:`${api}/user/get-profile/${currentUser._id}`
+    }).then(({data}) => {
+      dispatch(setCurrentUser(data.user));
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+  useEffect(() => {
+    getUserProfile();
+  },[]);
 
   return (
     <View style={{flex: 1}}>
@@ -221,9 +240,9 @@ const Home = ({navigation,currentUser}) => {
             justifyContent: 'center',
           }}>
           <Text style={{fontSize: 30, color: '#fff', fontWeight: '700'}}>
-            EV
+            Ero
             <Ico name="flash-on" size={30} />
-            APP
+            Ev
           </Text>
         </View>
         <TouchableOpacity onPress={() => {

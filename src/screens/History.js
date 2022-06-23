@@ -17,6 +17,19 @@ const appbar = '#7Cb342';
 
 
 const HistoryCard = ({charging}) => {
+
+    const getColor = (status) => {
+        switch (status){
+            case 'CHARGING':
+                return '#FFFF00';
+            case 'FAILED':
+                return '#FF0000';
+            case 'CHARGED':
+                return 'green'
+            default:
+                return '#FFFF00';
+        }
+    }
     return(
         <TouchableOpacity activeOpacity={0.4}>
               <View style={{display:'flex',flexDirection:'row', margin:10, flex:1, backgroundColor:themeColor2, padding:10, borderRadius:20}}>
@@ -27,7 +40,7 @@ const HistoryCard = ({charging}) => {
                 <View style={{flex:1, justifyContent:'center', flexDirection:'column'}}>
                     <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#fff', marginLeft:15, fontSize:18}}>Amount: ₹{charging.amount}/-</Text>
-                    <Text style={{backgroundColor:charging.status==='CHARGING' ? 'yellow' : 'green', marginLeft:5, padding:10, paddingVertical:2, fontWeight:'500', borderRadius:10, color:charging.status==='CHARGING' ? '#000':'#fff'}}>
+                    <Text style={{backgroundColor:getColor(charging.status), marginLeft:5, padding:10, paddingVertical:2, fontWeight:'500', borderRadius:10, color:'#fff'}}>
                         {charging.status}
                     </Text>
                     </View>
